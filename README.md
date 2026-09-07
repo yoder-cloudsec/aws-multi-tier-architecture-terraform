@@ -110,16 +110,3 @@ Once translated into Terraform, the configuration was organized by resource doma
 ├── outputs.tf                    # ALB DNS name output
 └── .gitignore                      # excludes state files, .tfvars, provider cache
 ```
-
-## Roadmap
-
-- [x] Rebuild this entire architecture in **Terraform**, resource by resource
-- [x] Organize configuration into logical files by resource domain
-- [ ] Store Terraform state remotely in S3 with DynamoDB state locking
-- [ ] Replace the placeholder app-tier response with a minimal real application
-- [ ] Add a CI/CD pipeline (GitHub Actions) to automate `plan`/`apply` on push
-- [ ] Layer in security scanning (Checkov/tfsec for IaC misconfigurations) as a DevSecOps follow-on project
-
-## Author's Note
-
-This build was done manually through the AWS Console first, intentionally, to build a real understanding of subnet routing, security group chaining, and tier isolation before automating any of it with Terraform. The Terraform version of this same architecture is the actual portfolio deliverable and will be linked here once complete.
