@@ -31,7 +31,7 @@ data "aws_ami" "amazon_linux" {
 
   filter {
     name   = "name"
-    values = ["al2023-ami-*-x86_64"]
+    values = ["al2023-ami-2*-x86_64"]
   }
 }
 
@@ -42,7 +42,35 @@ resource "aws_instance" "app" {
   vpc_security_group_ids = [aws_security_group.app.id]
   iam_instance_profile   = aws_iam_instance_profile.ec2-ssm.name
 
+  user_data = <<-EOF
+              #!/bin/bash
+              mkdir -p /home/ec2-user/web
+              echo "<h1>Response from Instance A (private_1a)</h1>" > /home/ec2-user/web/index.html
+              cd /home/ec2-user/web
+              nohup python3 -m http.server 80 &
+              EOF
+
   tags = {
     Name = "app-instance"
+  }
+}
+
+resource "aws_instance" "app-b" {
+  ami = data.aws_ami.amazon_linux.id
+  instance_type = "t3.micro"
+  subnet_id = aws_subnet.private-1b.id
+  vpc_security_group_ids = [aws_security_group.app.id]
+  iam_instance_profile = aws_iam_instance_profile.ec2-ssm.name
+
+   user_data = <<-EOF
+              #!/bin/bash
+              mkdir -p /home/ec2-user/web
+              echo "<h1>Response from Instance B (private_1b)</h1>" > /home/ec2-user/web/index.html
+              cd /home/ec2-user/web
+              nohup python3 -m http.server 80 &
+              EOF              
+
+  tags = {
+    Name = "app-tier-instance-b"
   }
 }
